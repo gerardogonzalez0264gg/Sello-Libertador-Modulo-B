@@ -1,66 +1,131 @@
 # Sello Libertador — Módulo B: Registro de Títulos
 
-Este repositorio contiene únicamente el trabajo del **Módulo B**, desarrollado en Solidity para el proyecto Sello Libertador.
+## Descripción del módulo
+
+Este repositorio contiene el desarrollo del **Módulo B: Registro de Títulos**, perteneciente al proyecto académico Sello Libertador.
+
+El módulo permite registrar y administrar títulos académicos mediante contratos inteligentes desarrollados en Solidity, utilizando la tecnología Blockchain.
+
+Su objetivo es garantizar la integridad, trazabilidad y control de los títulos emitidos por las distintas facultades de la Universidad Bernardo O'Higgins (UBO).
 
 ## Objetivo
 
-Registrar y administrar títulos académicos mediante localizadores públicos de 10 caracteres. En la blockchain se almacena un compromiso criptográfico del documento, no los datos personales del titulado.
+Implementar un sistema descentralizado para registrar títulos académicos mediante localizadores únicos de 10 caracteres.
 
-## Estructura
+En la Blockchain se almacena un compromiso criptográfico del documento, evitando publicar directamente los datos personales del titulado.
+
+## Estructura del proyecto
 
 ```text
-Sello_Libertador_Modulo_B/
+Sello-Libertador-Modulo-B/
+│
+├── README.md
+│
 ├── contracts/
 │   ├── moduloB/
 │   │   └── RegistroTitulos.sol
+│   │
 │   ├── interfaces/
 │   │   ├── IRegistroTitulos.sol
 │   │   └── IRegistroEmisores.sol
+│   │
 │   ├── comun/
 │   │   ├── ConstantesUBO.sol
 │   │   └── ActorPruebas.sol
+│   │
 │   └── simulacros/
-│       └── SimRegistroEmisores.sol
+│       ├── SimRegistroEmisores.sol
+│       └── SimRegistroTitulos.sol
+│
 ├── tests/
 │   └── ModuloB_test.sol
-├── scripts/
-│   └── escenario_moduloB.js
-└── README.md
+│
+└── scripts/
+    └── escenario_moduloB.js
 ```
 
 ## Funcionalidades principales
 
-- Emisión individual de títulos.
-- Emisión de títulos por lotes (máximo 50).
-- Validación del formato del localizador: 10 caracteres entre `0-9` y `A-Z`.
-- Validación de emisores autorizados por facultad mediante la interfaz del Módulo A.
-- Suspensión, reactivación y revocación de títulos.
-- Rectificación de títulos.
-- Pausa de emergencia administrada por la dirección autorizada.
-- Eventos y errores personalizados para registrar operaciones y manejar errores.
+El contrato `RegistroTitulos.sol` implementa las siguientes funcionalidades:
 
-## Dependencias y alcance
+- **Emisión de títulos:** permite registrar títulos académicos individualmente.
+- **Emisión por lotes:** permite registrar varios títulos en una sola operación, con un máximo de 50.
+- **Validación de localizadores:** verifica que tengan 10 caracteres alfanuméricos entre 0-9 y A-Z.
+- **Control de emisores:** verifica que los emisores estén autorizados en la facultad correspondiente mediante la integración con el Módulo A.
+- **Suspensión y reactivación:** permite cambiar el estado de los títulos.
+- **Revocación:** permite invalidar definitivamente un título.
+- **Rectificación:** permite revocar un título y generar uno nuevo corregido.
+- **Pausa de emergencia:** permite a la administración detener temporalmente las operaciones que crean títulos.
 
-El contrato principal `RegistroTitulos.sol` utiliza:
-- `IRegistroTitulos.sol`: interfaz del Módulo B.
-- `IRegistroEmisores.sol`: interfaz de integración con el Módulo A.
-- `ConstantesUBO.sol`: constantes y funciones compartidas del proyecto.
+## Organización de los contratos
 
-Para ejecutar las pruebas y el escenario demostrativo se incluye `SimRegistroEmisores.sol`, que simula el registro de emisores del Módulo A, y `ActorPruebas.sol`, auxiliar para las pruebas.
+### Contrato principal
 
-**Nota:** `SimRegistroEmisores.sol` es un simulacro para desarrollo y pruebas; no reemplaza el contrato real del Módulo A. La integración definitiva debe utilizar un contrato compatible con `IRegistroEmisores`.
+- `RegistroTitulos.sol`: contiene la lógica principal del Módulo B para registrar y administrar títulos académicos.
 
-## Compilación y pruebas en Remix
+### Interfaces
 
-1. Abre [Remix IDE](https://remix.ethereum.org/).
-2. Carga la carpeta del repositorio o importa sus archivos.
-3. Selecciona un compilador Solidity `0.8.20` o compatible con `^0.8.20`.
-4. Compila `contracts/moduloB/RegistroTitulos.sol`.
-5. Para las pruebas, compila `tests/ModuloB_test.sol` y ejecuta sus pruebas desde el entorno de pruebas de Remix.
+- `IRegistroTitulos.sol`: define las funciones, estructuras, estados y eventos relacionados con el registro de títulos.
+- `IRegistroEmisores.sol`: permite la comunicación con el registro de emisores correspondiente al Módulo A.
 
-El archivo `scripts/escenario_moduloB.js` contiene un escenario de demostración. Para ejecutarlo, compila primero `SimRegistroEmisores.sol` y `RegistroTitulos.sol`, activa la generación de metadatos si el script necesita los artefactos y utiliza Remix VM.
+### Contratos compartidos
+
+- `ConstantesUBO.sol`: contiene constantes y elementos compartidos del proyecto.
+- `ActorPruebas.sol`: contrato auxiliar utilizado para realizar pruebas con diferentes cuentas y emisores.
+
+### Simulacros
+
+- `SimRegistroEmisores.sol`: simula el registro de emisores del Módulo A para realizar pruebas del Módulo B sin depender del contrato definitivo.
+- `SimRegistroTitulos.sol`: implementación simplificada del registro de títulos utilizada como apoyo para pruebas e integración con el Curso C. No reemplaza el contrato principal `RegistroTitulos.sol`.
+
+## Pruebas
+
+El archivo `ModuloB_test.sol` contiene las pruebas del módulo utilizando el entorno de pruebas de Remix.
+
+Se contemplan pruebas relacionadas con:
+
+- Emisión de títulos.
+- Validación de localizadores.
+- Control de permisos y autorizaciones.
+- Emisión por lotes.
+- Cambios de estado de los títulos.
+- Rectificación.
+- Pausa de emergencia.
+
+El contrato de pruebas utiliza `SimRegistroEmisores.sol` para simular la autorización de emisores durante la ejecución.
+
+## Script de demostración
+
+El archivo `escenario_moduloB.js` contiene un escenario de demostración para desplegar e interactuar con los contratos desde Remix.
+
+Para ejecutarlo se requiere:
+
+1. Utilizar Remix IDE.
+2. Seleccionar el entorno Remix VM.
+3. Compilar los contratos necesarios.
+4. Activar la generación de metadatos en los ajustes de Remix.
+5. Ejecutar el script desde la sección de scripts.
+
+## Tecnologías utilizadas
+
+- Solidity ^0.8.20
+- Ethereum Virtual Machine (EVM)
+- Remix IDE
+- Smart Contracts
+- Blockchain
+
+## Integración con otros módulos
+
+El Módulo B forma parte de una arquitectura compuesta por distintos módulos del proyecto Sello Libertador.
+
+Su integración principal se realiza con el Módulo A mediante la interfaz `IRegistroEmisores.sol`, que permite consultar las autorizaciones de los emisores.
+
+También proporciona la interfaz `IRegistroTitulos.sol`, que permite que otros módulos interactúen con el registro de títulos.
 
 ## Autoría
 
-Módulo B — Registro de Títulos  
+**Módulo B — Registro de Títulos**
+
 Proyecto académico Sello Libertador.
+
+Universidad Bernardo O'Higgins (UBO).
